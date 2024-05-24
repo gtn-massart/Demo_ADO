@@ -206,9 +206,14 @@ string connectionString = @"server=(localdb)\MSSQLLocalDB;database=PokemonDB;int
 #region EXO_Book
 IBookRepository bookRepository = new BookRepository(connectionString);
 
-//List<Book> books = bookRepository.GetAll().ToList();
+List<Book> books = bookRepository.GetAll().ToList();
 
-//Console.WriteLine("------------------------------------------------");
+books.ForEach(b => Console.WriteLine(b));
+
+int count = bookRepository.Count();
+Console.WriteLine($"Count: {count}");
+
+Console.WriteLine("------------------------------------------------");
 
 Book? book = bookRepository.GetById(2);
 
@@ -216,6 +221,9 @@ if (book is not null)
 {
     Console.WriteLine($"Titre: {book.Title}\nDescription: {book.Description}\nAuthor: {book.AuthorId}");
 }
+
+Console.WriteLine("------------------------------------------------");
+
 #endregion
 
 #region EXO

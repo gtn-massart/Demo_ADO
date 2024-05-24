@@ -100,22 +100,88 @@ namespace Demo_ADO.Repositories
 
         public int Count()
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"SELECT COUNT(*)
+                                FROM Book";
+
+            conn.Open();
+
+            int count = (int)cmd.ExecuteScalar();
+
+            conn.Close();
+
+            return count;
         }
 
         public int create(Book b)
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"INSERT INTO Book
+                                OUTPUT INSERTED.Id
+                                VALUES (@title, @description, @authorId, @created)";
+
+            cmd.Parameters.AddWithValue ("@title", b.Title);
+            cmd.Parameters.AddWithValue ("@description", b.Description);
+            cmd.Parameters.AddWithValue ("@authorId", b.AuthorId);
+            cmd.Parameters.AddWithValue ("@created", b.Created is null ? DBNull.Value : b.Created);
+
+            conn.Open();
+
+            int id = (int)cmd.ExecuteScalar();
+
+            conn.Close();
+
+            return id;
         }
 
         public bool Update(int id, Book b)
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"UPDATE Book
+                                SET Title = @title,
+                                    Description = @description,
+                                    AuthorId = @authorId
+                                    Created = @created
+                                WHERE id = @id";
+
+            cmd.Parameters.AddWithValue("@title", b.Title);
+            cmd.Parameters.AddWithValue("@description", b.Description);
+            cmd.Parameters.AddWithValue("@authorId", b.AuthorId);
+            cmd.Parameters.AddWithValue("@created", b.Created is null ? DBNull.Value : b.Created);
+
+            conn.Open();
+
+            int nbRows = cmd.ExecuteNonQuery();
+
+            conn.Close();
+
+            return nbRows == 1;
         }
 
         public bool delete(int id)
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"DELETE Book
+                                WHERE Id = @id";
+
+            cmd.Parameters.AddWithValue("@id", id);
+
+            conn.Open();
+
+            int nbRows = cmd.ExecuteNonQuery();
+
+            conn.Close();
+
+            return nbRows == 1;
+
         }
     }
 }
